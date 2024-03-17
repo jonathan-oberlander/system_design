@@ -173,9 +173,12 @@ minikube start
 kubectl apply -f ./python/src/auth/manifests/
 kubectl apply -f ./python/src/gateway/manifests/
 k9s # you can see everything
+```
 
-# stop namespace
-kubectl get deployments --all-namespaces
-# kubectl delete -n NAMESPACE deployment DEPLOYMENT
-kubectl delete deployment auth
+right now we can't deploy the gateway successfully yet because rabiitmq is mot configured \
+
+to scale down we can  update the number of replicas using the cli:
+
+```bash
+kubectl scale deployment --replicas=0 gateway
 ```
