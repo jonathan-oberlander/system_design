@@ -1,5 +1,9 @@
 # log
 
+video to mp3 convertion service
+
+<img src="diagram.png">
+
 <https://www.youtube.com/watch?v=ZYAPH56ANC8&list=PL7g1jYj15RUP0SWYiLhllVEDFhp9Rd4jI>
 
 installed
@@ -114,4 +118,64 @@ mkdir auth_svc
 touch __init__.py # to mark directory as a package
 touch access.py
 pip install requests
+```
+
+created storage and auth_svc
+add the requirements and build the docker image
+
+```bash
+# python/src/gateway
+pip3 freeze > requirements.txt
+docker build .
+docker tag 13717abd395337bb220a2c06af9a4a9c0260b50a8bc45be7855b732507792ebe jonathanoberlander/gateway:latest
+docker images
+docker push jonathanoberlander/auth:latest
+```
+
+once push we create our kube manifests for the gateway \
+we add an ingress as the entry point, the default ingress proxy is nginx,  \
+we setup nginx the config in the ingress file \
+we create an entry point "mp3converter.com" \
+for that we need to update our hosts files
+
+```bash
+# root
+nvim /etc/hosts
+# add a loopback to localhost like so:
+127.0.0.1 mp3converter.com
+```
+
+Then we bind our mp3converter.com to our loopback address using the ingress minikube addon and tunnel.
+
+[minikube config](https://minikube.sigs.k8s.io/docs/start/)
+
+```bash
+minikube addons list
+
+# | ingress | minikube | disabled | Kubernetes |
+
+minikube addons enable ingress
+minikube tunnel
+```
+
+```bash
+# to stop minikube
+minikube stop
+
+# you can delete the minikube instance like so
+minikube delete --all
+```
+
+same thing as before
+
+```bash
+minikube start
+kubectl apply -f ./python/src/auth/manifests/
+kubectl apply -f ./python/src/gateway/manifests/
+k9s # you can see everything
+
+# stop namespace
+kubectl get deployments --all-namespaces
+# kubectl delete -n NAMESPACE deployment DEPLOYMENT
+kubectl delete deployment auth
 ```

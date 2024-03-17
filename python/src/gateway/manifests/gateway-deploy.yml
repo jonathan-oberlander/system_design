@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth
+  name: gateway
   labels:
-    app: auth
-    
+    app: gateway
+
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: auth
+      app: gateway
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 3
-      
+
   # pod
   template:
     metadata:
       labels:
-        app: auth
+        app: gateway
     spec:
       containers:
-        - name: auth
-          image: jonathanoberlander/auth
+        - name: gateway
+          image: jonathanoberlander/gateway
           ports:
-            - containerPort: 5000
+            - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: auth-configmap
+                name: gateway-configmap
             - secretRef:
-                name: auth-secret
+                name: gateway-secret
