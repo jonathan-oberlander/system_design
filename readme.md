@@ -182,3 +182,35 @@ to scale down we can  update the number of replicas using the cli:
 ```bash
 kubectl scale deployment --replicas=0 gateway
 ```
+
+## Rabbitmq
+
+we are creating the manifests \
+the rabbitmq ui needs an ingress \
+the ingress needs to be configured in the etc/host as well
+
+```bash
+# root
+nvim /etc/hosts
+# add a loopback to localhost like so:
+127.0.0.1 rabbitmq-manager.com
+```
+
+then apply the change to kubernetes
+
+```bash
+kubectl apply -f ./python/src/rabbit/manifests/
+```
+
+for persistent storage, the stable is immutable, therefore if we need to update the manifest config we should first delete the resources and apply them again.
+
+```bash
+kubectl delete -f ./python/src/rabbit/manifests/
+```
+
+Now we can use the tunnel to minikube
+and go view the rabbitmq manager ui in the browser at <rabbitmq-manager.com>
+
+```bash
+minikube tunnel
+```
